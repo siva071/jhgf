@@ -200,11 +200,11 @@
             Login successful! Redirecting...
         </div>
 
-        <form id="loginForm">
+        <form id="loginForm" onsubmit="loginUser(event)">
             <div class="form-group">
-                <label for="email">Email Address</label>
-                <input type="email" id="email" name="email" required placeholder="Enter your email">
-                <div class="error-message" id="emailError">Please enter a valid email address</div>
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required placeholder="Enter your username">
+                <div class="error-message" id="usernameError">Please enter a valid username</div>
             </div>
 
             <div class="form-group">
@@ -230,21 +230,21 @@
     </div>
 
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+        function loginUser(event) {
+            event.preventDefault();
             
             // Reset error states
             clearErrors();
             
             // Get form values
-            const email = document.getElementById('email').value.trim();
+            const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
             
             let isValid = true;
             
-            // Validate email
-            if (!email || !isValidEmail(email)) {
-                showError('email', 'emailError', 'Please enter a valid email address');
+            // Validate username
+            if (!username) {
+                showError('username', 'usernameError', 'Please enter a valid username');
                 isValid = false;
             }
             
@@ -254,30 +254,33 @@
                 isValid = false;
             }
             
+            // Check credentials (admin/admin123)
             if (isValid) {
-                // Show success message
-                document.getElementById('successMessage').style.display = 'block';
-                
-                // Log the login attempt (in real app, this would be sent to server)
-                console.log('Login attempt:', {
-                    email: email,
-                    password: password,
-                    remember: document.getElementById('remember').checked,
-                    timestamp: new Date().toISOString()
-                });
-                
-                // Simulate login process
-                setTimeout(() => {
-                    // In a real application, redirect to dashboard or home page
-                    alert('Login successful! (This is a demo - no actual authentication)');
-                    // window.location.href = '/dashboard';
-                }, 1500);
+                if (username === 'admin' && password === 'admin123') {
+                    // Show success message
+                    document.getElementById('successMessage').style.display = 'block';
+                    
+                    // Store login state
+                    localStorage.setItem("loggedIn", "true");
+                    localStorage.setItem("username", username);
+                    
+                    // Log the login attempt
+                    console.log('Login successful:', {
+                        username: username,
+                        remember: document.getElementById('remember').checked,
+                        timestamp: new Date().toISOString()
+                    });
+                    
+                    // Redirect to chatbot page
+                    setTimeout(() => {
+                        window.location.href = "chatbot.html";
+                    }, 1500);
+                } else {
+                    // Invalid credentials
+                    showError('password', 'passwordError', 'Invalid username or password');
+                    isValid = false;
+                }
             }
-        });
-        
-        function isValidEmail(email) {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return emailRegex.test(email);
         }
         
         function showError(inputId, errorId, message) {
@@ -297,10 +300,10 @@
         }
         
         // Clear error on input
-        document.getElementById('email').addEventListener('input', function() {
+        document.getElementById('username').addEventListener('input', function() {
             if (this.classList.contains('error')) {
                 this.classList.remove('error');
-                document.getElementById('emailError').style.display = 'none';
+                document.getElementById('usernameError').style.display = 'none';
             }
         });
         
@@ -314,13 +317,13 @@
         // Handle forgot password link
         document.querySelector('.forgot-password').addEventListener('click', function(e) {
             e.preventDefault();
-            alert('Password reset functionality would be implemented here');
+            alert('Hint: Username is "admin" and Password is "admin123"');
         });
         
         // Handle signup link
         document.querySelector('.login-footer a').addEventListener('click', function(e) {
             e.preventDefault();
-            alert('Signup page would be implemented here');
+            alert('Please contact administrator for account creation');
         });
     </script>
 </body>

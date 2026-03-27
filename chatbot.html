@@ -68,7 +68,13 @@
 </head>
 <body>
     <div class="chat-container">
-        <h1>Simple Chat Bot</h1>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h1>AI Chat Bot</h1>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <span style="color: #666; font-size: 14px;">Welcome, <span id="username">Admin</span></span>
+                <button onclick="logout()" style="padding: 8px 16px; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer;">Logout</button>
+            </div>
+        </div>
         <div id="chat-messages" class="chat-messages">
             <div class="message bot-message">Hello! I'm a simple chat bot. How can I help you today?</div>
         </div>
@@ -79,6 +85,15 @@
     </div>
 
     <script>
+        // Check authentication
+        if (!localStorage.getItem("loggedIn")) {
+            window.location.href = "login.html";
+        }
+
+        // Display username
+        const username = localStorage.getItem("username") || "Admin";
+        document.getElementById("username").textContent = username;
+
         const chatMessages = document.getElementById('chat-messages');
         const userInput = document.getElementById('user-input');
 
@@ -121,6 +136,12 @@
                 }
             }
             return responses['default'];
+        }
+
+        function logout() {
+            localStorage.removeItem("loggedIn");
+            localStorage.removeItem("username");
+            window.location.href = "login.html";
         }
 
         // Allow sending message with Enter key
